@@ -1,0 +1,17 @@
+# If the scripts are ever run from inside the repo dir for testing,
+# don't commit footage or generated subtitles.
+*.MP4
+*.mp4
+*.srt
+*.gpmf.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
