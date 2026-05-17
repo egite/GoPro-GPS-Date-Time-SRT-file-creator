@@ -40,7 +40,7 @@ Download exiftool from <https://exiftool.org/> if you don't have it.
 
 ## Usage
 
-Drop `gopro-srt.bat` (Windows) or `gopro-srt.sh` (Linux/macOS) into a folder of GoPro `.MP4` files and run it. One `.srt` is written next to each MP4. Speed-up exports (`*32x.MP4`, `*64x.MP4`, …) are skipped — they don't carry the GPMF telemetry track.
+Drop `gopro-srt.bat` (Windows) or `gopro-srt.sh` (Linux/macOS) into a folder of GoPro `.MP4` files and run it. One `.srt` is written next to each MP4. Speed-up exports (`*32x.MP4`, `*64x.MP4`, …) are skipped — they don't carry the GPMF telemetry track (see [Speed-up / timelapse filter](#speed-up--timelapse-filter) below if you want to change which files are skipped).
 
 Direct invocation:
 
@@ -69,6 +69,32 @@ python3 gopro_gps_srt.py --offset -1.8 GH010039.MP4
 ```
 
 Compare the new SRT against a known clock in-frame. Once a value works across multiple clips, change `DEFAULT_OFFSET_SEC` near the top of `gopro_gps_srt.py` so you don't have to pass `--offset` each run.
+
+## Speed-up / timelapse filter
+
+GoPro's in-app speed-up and timelapse exports produce files named like `A01_32x.MP4`, `B02_64x.MP4`, `_8x.MP4`, etc. They're re-encoded from the original clip and **don't carry the GPMF telemetry track**, so SRT generation isn't possible. The script silently skips any file whose name ends in `<digits>x.MP4`.
+
+The match is a single regex near the top of `gopro_gps_srt.py`:
+
+```python
+SPEEDUP_RE = re.compile(r'\d+x\.mp4$', re.IGNORECASE)
+```
+
+That covers every `2x`, `4x`, `8x`, `15x`, `30x`, `32x`, `60x`, `64x` etc. ending. To change the behaviour:
+
+- **Skip more patterns** — e.g. also skip files ending in `_PROXY.MP4`:
+  ```python
+  SPEEDUP_RE = re.compile(r'(\d+x|_PROXY)\.mp4$', re.IGNORECASE)
+  ```
+- **Skip fewer patterns** — e.g. allow `32x` and `64x` through (in case a future firmware does start writing GPMF into them) but keep skipping all the others:
+  ```python
+  SPEEDUP_RE = re.compile(r'(?!32|64)\d+x\.mp4$', re.IGNORECASE)
+  ```
+- **Skip nothing at all** — set it to a pattern that can never match:
+  ```python
+  SPEEDUP_RE = re.compile(r'(?!)')
+  ```
+  Speed-up files passed in will then be attempted and will just `[skip]` themselves at the "only 0 valid GPS samples" check.
 
 ## Output format
 
