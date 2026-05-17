@@ -72,7 +72,7 @@ Compare the new SRT against a known clock in-frame. Once a value works across mu
 
 ## Speed-up / timelapse filter
 
-GoPro's in-app speed-up and timelapse exports produce files named like `A01_32x.MP4`, `B02_64x.MP4`, `_8x.MP4`, etc. They're re-encoded from the original clip and **don't carry the GPMF telemetry track**, so SRT generation isn't possible. The script silently skips any file whose name ends in `<digits>x.MP4`.
+Speed-up and timelapse files named like `A01_32x.MP4`, `B02_64x.MP4`, `_8x.MP4`, etc. are re-encoded from the original clip and **don't carry the GPMF telemetry track**, so SRT generation isn't possible. The script silently skips any file whose name ends in `<digits>x.MP4`.
 
 The match is a single regex near the top of `gopro_gps_srt.py`:
 
