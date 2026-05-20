@@ -1,6 +1,6 @@
 # GoPro GPS Date-Time SRT file creator
 
-Generate `.srt` subtitle files that show the interpolated GPS UTC time at every frame, from GoPro `.MP4` clips with embedded GPMF telemetry. The SRT can then be burned into the video with ffmpeg or used as a reference track in editors.
+Generate `.srt` subtitle files that show the interpolated GPS UTC time at every frame, from GoPro `.MP4` clips with embedded GPMF telemetry. The SRT can then be burned into the video with ffmpeg or used as a reference track in editors.  Useful when when watching video of a flight to correpond events to GPS time for later review of flight data.
 
 ## What's in this repo
 
