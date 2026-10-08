@@ -106,8 +106,11 @@ def process(video, hz=HZ, offset=DEFAULT_OFFSET_SEC):
     output = os.path.splitext(video)[0] + '.srt'
 
     try:
+        # -n keeps $SampleTime numeric. Without it exiftool switches to
+        # H:MM:SS formatting past the 30s mark, float() rejects those rows,
+        # and every sample after the first 30 is silently dropped.
         out = subprocess.check_output(
-            ['exiftool', '-ee', '-api', 'LargeFileSupport=1',
+            ['exiftool', '-n', '-ee', '-api', 'LargeFileSupport=1',
              '-p', '$SampleTime | $GPSDateTime', '-q', '-q', video],
             text=True, stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as e:

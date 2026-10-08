@@ -24,19 +24,32 @@ brew install exiftool                                # macOS
 
 ### Windows
 
-exiftool is **not** on `PATH` by default on most Windows installs. `gopro-srt.bat` works around this by prepending a hardcoded folder to `PATH` before invoking Python:
+exiftool is **not** on `PATH` by default on most Windows installs, so `gopro-srt.bat` looks for `exiftool.exe` in three places and uses the first hit:
+
+1. `%EXIFTOOL_DIR%` — set it as a real environment variable (`setx EXIFTOOL_DIR "C:\Tools\exiftool"`), or uncomment and edit this line near the top of the script:
+
+   ```batch
+   rem set "EXIFTOOL_DIR=C:\Tools\exiftool"
+   ```
+
+2. The script's own folder — just drop `exiftool.exe` next to `gopro-srt.bat`.
+3. `PATH`.
+
+It prints which one it used, and if none of them pan out it tells you so and stops without touching anything. Nothing is hardcoded to a particular machine.
+
+Download exiftool from <https://exiftool.org/> if you don't have it. If you take the standalone Windows build, rename `exiftool(-k).exe` to `exiftool.exe` first, or it will wait for a keypress and never return.
+
+The batch file prefers the `py` launcher and falls back to `python.exe`.
+
+#### Optional: self-cleanup
+
+If you work by copying these three files into each folder of footage, set this near the top of `gopro-srt.bat`:
 
 ```batch
-set "PATH=F:\File Tools;%PATH%"
+set "CLEANUP=1"
 ```
 
-On the dev machine, `exiftool.exe` lives at `F:\File Tools\exiftool.exe`.
-
-**If you're cloning this repo to a different Windows machine,** either:
-- Edit line 10 of `gopro-srt.bat` to point at wherever your `exiftool.exe` is, or
-- Add that folder to your system `PATH` and delete the `set "PATH=..."` line entirely.
-
-Download exiftool from <https://exiftool.org/> if you don't have it.
+On a **successful** run the script then deletes `gopro_gps_srt.py`, `gopro-srt.sh` and itself, leaving just the MP4s and the new `.srt` files. It is `0` by default, and a failed run never deletes anything.
 
 ## Usage
 
